@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Contador Monster 😈</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    color: #00ff88;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: linear-gradient(45deg, #000000, #001a0f, #00ff88);
+    background-size: 400% 400%;
+    animation: gradientMove 10s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    position: relative;
+    z-index: 2;
+    margin-top: 80px;
+}
+
+h1 {
+    font-size: 48px;
+    text-shadow: 0 0 15px #00ff88;
+}
+
+#contador {
+    font-size: 38px;
+    margin: 25px auto;
+    padding: 18px 35px;
+    border: 3px solid #00ff88;
+    display: inline-block;
+    border-radius: 12px;
+    box-shadow: 0 0 25px #00ff88;
+    animation: glow 1.8s infinite alternate;
+    min-width: 340px;
+}
+
+#botao {
+    margin-top: 30px;
+    padding: 15px 40px;
+    font-size: 20px;
+    background: black;
+    color: #00ff88;
+    border: 3px solid #00ff88;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 15px #00ff88;
+    transition: all 0.3s;
+}
+
+#botao:hover {
+    background: #00ff88;
+    color: black;
+    transform: scale(1.1);
+    box-shadow: 0 0 35px #00ff88;
+}
+
+#botao:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 10px #00ff88; }
+    100% { box-shadow: 0 0 40px #00ff88; }
+}
+
+canvas {
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="container">
+    <h1>⏳ CONTAGEM PRO MONSTER 😈</h1>
+    <div id="contador"></div>
+    <br><br>
+    <button onclick="verificarMonster()" id="botao">
+        Posso pegar o Monster agora? 🔥
+    </button>
+</div>
+
+<script>
+// ==================== SETUP ====================
+const contador = document.getElementById("contador");
+const botao = document.getElementById("botao");
+
+// DATA CORRETA (ISO = melhor)
+const alvo = new Date("2026-04-13T13:00:00").getTime();
+
+// ==================== CONTADOR ====================
+function atualizarContador() {
+    const agora = new Date().getTime();
+    const diferenca = alvo - agora;
+
+    if (diferenca <= 0) {
+        contador.innerHTML = 
+            "🔥 MONSTER LIBERADO AGORA! 🔥<br><span style='font-size:26px'>PEGA LOGO 😈</span>";
+
+        botao.disabled = true;
+        return;
+    }
+
+    const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diferenca / (1000 * 60 * 60)) % 24);
+    const minutos = Math.floor((diferenca / (1000 * 60)) % 60);
+    const segundos = Math.floor((diferenca / 1000) % 60);
+
+    contador.innerHTML = `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+}
+
+// ==================== BOTÃO ====================
+function verificarMonster() {
+    const agora = new Date().getTime();
+
+    if (agora >= alvo) {
+        alert("🔥 SIM! PEGA O MONSTER AGORA 😈");
+    } else {
+        alert("❌ Ainda não, calma aí doido ☠️\nLibera dia 13/04 às 13h");
+    }
+}
+
+setInterval(atualizarContador, 1000);
+atualizarContador();
+
+// ==================== PARTÍCULAS ====================
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+
+let particles = [];
+
+for (let i = 0; i < 150; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 3.5 + 1,
+        speedY: Math.random() * 2 + 0.8
+    });
+}
+
+function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00ff88";
+
+    particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        p.y -= p.speedY;
+
+        if (p.y < 0) {
+            p.y = canvas.height;
+            p.x = Math.random() * canvas.width;
+        }
+    });
+
+    requestAnimationFrame(drawParticles);
+}
+
+window.addEventListener("resize", resizeCanvas);
+
+drawParticles();
+</script>
+
+</body>
+</html>
